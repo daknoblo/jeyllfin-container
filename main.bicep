@@ -130,6 +130,18 @@ module storageAccountContainer 'br/public:avm/res/storage/storage-account:0.14.1
   }
 }
 
+//
+// keyvault
+//
+
+module keyvault 'br/public:avm/res/key-vault/vault:0.10.1' = {
+  name: 'keyvaultDeployment'
+  params: {
+    name: '${projPrefix}-keyvault'
+    enablePurgeProtection: false
+    location: location
+  }
+}
 
 //
 // container instances
@@ -203,4 +215,3 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
     ]
   }
 }
-
