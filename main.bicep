@@ -134,7 +134,7 @@ module storageAccountContainer 'br/public:avm/res/storage/storage-account:0.14.1
 // keyvault
 //
 
-module keyvault 'br/public:avm/res/key-vault/vault:0.10.1' = {
+module containerKeyvault 'br/public:avm/res/key-vault/vault:0.10.1' = {
   name: 'keyvaultDeployment'
   params: {
     name: '${projPrefix}-keyvault'
@@ -201,7 +201,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
+          storageAccountKey: containerKeyvault.getSecret(storagekey)
         }
       }
       {
@@ -209,7 +209,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
+          storageAccountKey: containerKeyvault.getSecret(storagekey)
         }
       }
     ]
