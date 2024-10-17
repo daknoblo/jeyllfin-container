@@ -19,7 +19,10 @@ resource resourceGroupName 'Microsoft.Resources/resourceGroups@2024-07-01' exist
   scope: subscription(rgName)
 }
 
+//
 // networking resources
+//
+
 module virtualNetwork 'br/public:avm/res/network/virtual-network:0.4.0' = {
   name: '${projPrefix}-virtualNetworkDeployment'
   scope: resourceGroup(resourceGroupName.name)
@@ -90,19 +93,6 @@ module vnetNsg 'br/public:avm/res/network/network-security-group:0.5.0' = {
   }
 }
 
-//module privateDnsZone 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
-//  name: '${projPrefix}-privateDnsZoneDeployment'
-//  params: {
-//    // Required parameters
-//    name: 'jellyfin.local'
-//    // Non-required parameters
-//    location: 'global'
-//  }
-//}
-
-//
-// storage for containers
-//
 module storageAccountContainer 'br/public:avm/res/storage/storage-account:0.14.1' = {
   name: '${projPrefix}-storageAccount-Container'
   scope: resourceGroup(resourceGroupName.name)
@@ -138,5 +128,61 @@ module storageAccountContainer 'br/public:avm/res/storage/storage-account:0.14.1
       shareSoftDeleteEnabled: false
       largeFileSharesState: 'Enabled'
     }
+  }
+}
+
+
+//
+// container instances
+//
+
+module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.1' = {
+  name: 'containerGroupDeployment'
+  params: {
+    // Required parameters
+    name: '${projPrefix}-jellyfin'
+    containers: [
+      {
+        name: 'jellyfin-test'
+        properties: {
+          image: 'lscr.io/linuxserver/jellyfin:latest'
+          ports: [
+            {
+              port: 8096
+              protocol: 'Tcp'
+            }
+          ]
+          resources: {
+            requests: {
+              cpu: 2
+              memoryInGB: 2
+            }
+          }
+          environmentVariables: [
+            {name: 'TZ', value: 'Europe/Berlin'}
+          ]
+          volumeMounts: [
+            {
+              name: 'appdata'
+              mountPath: '/config'
+              readOnly: false
+            }
+            {
+              name: 'media'
+              mountPath: '/media'
+              readOnly: true
+            }
+          ]
+        }
+      }
+    ]
+    ipAddressPorts: [
+      {
+        port: 8096
+        protocol: 'Tcp'
+      }
+    ]
+    // Non-required parameters
+    location: '<location>'
   }
 }
