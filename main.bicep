@@ -59,28 +59,28 @@ module vnetNsg 'br/public:avm/res/network/network-security-group:0.5.0' = {
     location: location
     securityRules: [
       {
-        name: 'DenyAllInBound'
+        name: 'AllowJellyfinInbound'
         properties: {
-          access: 'Deny'
-          description: 'Deny all inbound traffic'
+          access: 'Allow'
+          description: 'Allow jellyfin traffic'
           destinationAddressPrefix: '*'
-          destinationPortRange: '*'
+          destinationPortRange: '8096'
           direction: 'Inbound'
-          priority: 4096
+          priority: 200
           protocol: '*'
           sourceAddressPrefix: '*'
           sourcePortRange: '*'
         }
       }
       {
-        name: 'DenyAllOutBound'
+        name: 'AllowJellyfinOutbound'
         properties: {
-          access: 'Deny'
-          description: 'Deny all outbound traffic'
+          access: 'Allow'
+          description: 'Allow jellyfin traffic'
           destinationAddressPrefix: '*'
-          destinationPortRange: '*'
+          destinationPortRange: '8096'
           direction: 'Outbound'
-          priority: 4096
+          priority: 200
           protocol: '*'
           sourceAddressPrefix: '*'
           sourcePortRange: '*'
