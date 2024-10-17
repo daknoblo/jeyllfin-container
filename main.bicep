@@ -11,7 +11,6 @@ var storageAccNameContainer = '${projPrefix}sacontainer7908'
 //var saAccKeyAppdata = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameAppdata), '2019-06-01').keys[0].value
 //var saAccKeyMedia = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameMedia), '2019-06-01').keys[0].value
 
-
 // target resource group
 
 resource resourceGroupName 'Microsoft.Resources/resourceGroups@2024-07-01' existing = {
@@ -190,7 +189,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: listKeys(storageAccNameContainer.id, '2023-01-01').keys[0].value
+          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
         }
       }
       {
@@ -198,9 +197,10 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: listKeys(storageAccNameContainer.id, '2023-01-01').keys[0].value
+          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
         }
       }
     ]
   }
 }
+
