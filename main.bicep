@@ -184,5 +184,23 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
     ]
     // Non-required parameters
     location: location
+    volumes: [
+      {
+        name: 'appdata'
+        azureFile: {
+          shareName: 'jellyfin-appdata'
+          storageAccountName: storageAccNameContainer
+          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
+        }
+      }
+      {
+        name: 'media'
+        azureFile: {
+          shareName: 'jellyfin-media'
+          storageAccountName: storageAccNameContainer
+          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
+        }
+      }
+    ]
   }
 }
