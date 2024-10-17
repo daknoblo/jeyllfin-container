@@ -38,10 +38,13 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.4.0' = {
       {
         name: 'ContainerInstanceSubnet'
         addressPrefix: '10.10.1.0/24'
+        networkSecurityGroupResourceId: vnetNsg.outputs.resourceId
+        delegation: 'Microsoft.ContainerInstance/containerGroups'
       }
       {
         name: 'DefaultSubnet'
         addressPrefix: '10.10.2.0/24'
+        networkSecurityGroupResourceId: vnetNsg.outputs.resourceId
       }
     ]
   }
@@ -87,15 +90,15 @@ module vnetNsg 'br/public:avm/res/network/network-security-group:0.5.0' = {
   }
 }
 
-module privateDnsZone 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
-  name: '${projPrefix}-privateDnsZoneDeployment'
-  params: {
-    // Required parameters
-    name: 'jellyfin.local'
-    // Non-required parameters
-    location: 'global'
-  }
-}
+//module privateDnsZone 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
+//  name: '${projPrefix}-privateDnsZoneDeployment'
+//  params: {
+//    // Required parameters
+//    name: 'jellyfin.local'
+//    // Non-required parameters
+//    location: 'global'
+//  }
+//}
 
 //
 // storage for containers
