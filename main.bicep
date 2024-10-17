@@ -190,7 +190,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
+          storageAccountKey: listKeys(storageAccNameContainer.id, '2023-01-01').keys[0].value
         }
       }
       {
@@ -198,7 +198,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: listKeys(storageAccNameContainer, '2023-01-01').keys[0].value
+          storageAccountKey: listKeys(storageAccNameContainer.id, '2023-01-01').keys[0].value
         }
       }
     ]
