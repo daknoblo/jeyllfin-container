@@ -8,8 +8,7 @@ var rgName = 'jellyfin-dev'
 var storageSku = 'Standard_LRS'
 var storageKind = 'StorageV2'
 var storageAccNameContainer = '${projPrefix}sacontainer7908'
-//var saAccKeyAppdata = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameAppdata), '2019-06-01').keys[0].value
-//var saAccKeyMedia = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameMedia), '2019-06-01').keys[0].value
+var storageAccKey = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameContainer), '2019-06-01').keys[0].value
 
 // target resource group
 
@@ -131,19 +130,6 @@ module storageAccountContainer 'br/public:avm/res/storage/storage-account:0.14.1
 }
 
 //
-// keyvault
-//
-
-module containerKeyvault 'br/public:avm/res/key-vault/vault:0.10.1' = {
-  name: 'keyvaultDeployment'
-  params: {
-    name: '${projPrefix}-keyvault'
-    enablePurgeProtection: false
-    location: location
-  }
-}
-
-//
 // container instances
 //
 
@@ -201,7 +187,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: containerKeyvault.getSecret(storagekey)
+          storageAccountKey: storageAccKey
         }
       }
       {
@@ -209,7 +195,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: containerKeyvault.getSecret(storagekey)
+          storageAccountKey: storageAccKey
         }
       }
     ]
