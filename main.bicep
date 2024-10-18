@@ -8,7 +8,7 @@ var rgName = 'jellyfin-dev'
 var storageSku = 'Standard_LRS'
 var storageKind = 'StorageV2'
 var storageAccNameContainer = '${projPrefix}sacontainer7908'
-var storageAccKey = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameContainer), '2019-06-01').keys[0].value
+var storageAccKey = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameContainer), '2021-04-01').keys[0].value
 
 // target resource group
 
@@ -88,6 +88,20 @@ module vnetNsg 'br/public:avm/res/network/network-security-group:0.5.0' = {
         }
       }
     ]
+  }
+}
+
+resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: 'mi-jellyfin'
+  location: location
+}
+
+resource miRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccountContainer.name, userAssignedIdentity.id, 'Storage Blob Data Contributor')
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')
+    principalId: userAssignedIdentity.properties.principalId
+    scope: storageAccountContainer
   }
 }
 
@@ -187,7 +201,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          storageAccountKey: storageAccKey
+          userAssignedIdentity: userAssignedIdentity.id          
         }
       }
       {
