@@ -8,7 +8,6 @@ var rgName = 'jellyfin-dev'
 var storageSku = 'Standard_LRS'
 var storageKind = 'StorageV2'
 var storageAccNameContainer = '${projPrefix}sacontainer7908'
-var storageAccKey = listkeys(resourceId('Microsoft.Storage/storageAccounts', storageAccNameContainer), '2021-04-01').keys[0].value
 
 // target resource group
 
@@ -200,7 +199,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          userAssignedIdentityResourceId: userAssignedIdentity.properties.principalId
+          userAssignedIdentityResourceId: userAssignedIdentity.id
         }
       }
       {
@@ -208,7 +207,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          userAssignedIdentityResourceId: userAssignedIdentity.properties.principalId
+          userAssignedIdentityResourceId: userAssignedIdentity.id
         }
       }
     ]
