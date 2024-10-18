@@ -101,7 +101,6 @@ resource miRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' =
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')
     principalId: userAssignedIdentity.properties.principalId
-    scope: storageAccountContainer
   }
 }
 
