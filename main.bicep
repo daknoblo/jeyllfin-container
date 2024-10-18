@@ -199,7 +199,9 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          userAssignedIdentityResourceId: userAssignedIdentity.id
+          identity: {
+            userAssignedIdentity: userAssignedIdentity.id
+          }
         }
       }
       {
@@ -207,7 +209,9 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          userAssignedIdentityResourceId: userAssignedIdentity.id
+          identity: {
+            userAssignedIdentity: userAssignedIdentity.id
+          }
         }
       }
     ]
