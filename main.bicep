@@ -200,7 +200,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-appdata'
           storageAccountName: storageAccNameContainer
-          systemAssignedMIPrincipalId: userAssignedIdentity.properties.principalId
+          userAssignedIdentityResourceId: userAssignedIdentity.properties.principalId
         }
       }
       {
@@ -208,7 +208,7 @@ module containerGroup 'br/public:avm/res/container-instance/container-group:0.2.
         azureFile: {
           shareName: 'jellyfin-media'
           storageAccountName: storageAccNameContainer
-          systemAssignedMIPrincipalId: userAssignedIdentity.properties.principalId
+          userAssignedIdentityResourceId: userAssignedIdentity.properties.principalId
         }
       }
     ]
