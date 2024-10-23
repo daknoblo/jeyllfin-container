@@ -6,10 +6,10 @@ var rgName = 'jellyfin-dev'
 var storageSku = 'Standard_LRS'
 var storageKind = 'StorageV2'
 var storageAccNameContainer = '${prefix}sacontainer7908'
-var vnetName = '${prefix}-vnet'
-var vnetAddressPrefix = '10.10.0.0/16'
-var subnetAddressPrefix = '10.10.1.0/24'
-var subnetName = 'aci-subnet'
+var GlobalVnetName = '${prefix}-vnet'
+var GlobalVnetAddressPrefix = '10.10.0.0/16'
+var ContainerSubnetAddressPrefix = '10.10.1.0/24'
+var ContainerSubnetName = 'aci-subnet'
 var networkProfileName = 'aci-networkProfile'
 var interfaceConfigName = 'eth0'
 var interfaceIpConfig = 'ipconfigprofile1'
@@ -19,7 +19,6 @@ var image = 'mcr.microsoft.com/azuredocs/aci-helloworld'
 var port = 80
 var cpuCores = 2
 var memoryInGb = 2
-var userAssignedIdentityName = '${prefix}-userAssignedIdentity'
 
 //// target resource group ////
 
@@ -30,23 +29,23 @@ resource resourceGroupName 'Microsoft.Resources/resourceGroups@2024-07-01' exist
 
 //// network resources ////
 
-resource vnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
-  name: vnetName
+resource GlobalVnet 'Microsoft.Network/virtualNetworks@2024-01-01' = {
+  name: GlobalVnetName
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetAddressPrefix
+        GlobalVnetAddressPrefix
       ]
     }
   }
 }
 
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01' = {
-  name: subnetName
-  parent: vnet
+resource ContainerSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01' = {
+  name: ContainerSubnetName
+  parent: GlobalVnet
   properties: {
-    addressPrefix: subnetAddressPrefix
+    addressPrefix: ContainerSubnetAddressPrefix
     delegations: [
       {
         name: 'DelegationService'
@@ -71,7 +70,7 @@ resource networkProfile 'Microsoft.Network/networkProfiles@2024-01-01' = {
               name: interfaceIpConfig
               properties: {
                 subnet: {
-                  id: subnet.id
+                  id: ContainerSubnet.id
                 }
               }
             }
@@ -100,7 +99,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
       defaultAction: 'Deny'
       virtualNetworkRules: [
         {
-          id: subnet.id
+          id: ContainerSubnet.id
           action: 'Allow'
         }
       ]
@@ -165,8 +164,8 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
     osType: 'Linux'
     subnetIds: [
       {
-        id: subnet.id
-        name: subnetName
+        id: ContainerSubnet.id
+        name: ContainerSubnetName
       }
     ]
     volumes: [
