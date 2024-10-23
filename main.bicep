@@ -19,6 +19,7 @@ var image = 'mcr.microsoft.com/azuredocs/aci-helloworld'
 var port = 80
 var cpuCores = 2
 var memoryInGb = 2
+var userAssignedIdentityName = '${prefix}-userAssignedIdentity'
 
 //// target resource group ////
 
@@ -81,11 +82,44 @@ resource networkProfile 'Microsoft.Network/networkProfiles@2024-01-01' = {
   }
 }
 
+//// storage account ////
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  name: storageAccNameContainer
+  location: location
+  sku: {
+    name: storageSku
+  }
+  kind: storageKind
+  properties: {
+    accessTier: 'Cool'
+  }
+}
+
+resource fileShareAppData 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+  name: '${storageAccount.name}/default/appdata'
+  properties: {
+    shareQuota: 5120 // 5GB
+  }
+}
+
+resource fileShareMedia 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+  name: '${storageAccount.name}/default/media'
+  properties: {
+    shareQuota: 10240 // 10GB
+  }
+}
+
 //// identity and role assignements ////
+
+resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: userAssignedIdentityName
+  location: location
+}
 
 //// container instance ////
 
-resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
+resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-preview' = {
   name: containerGroupName
   location: location
   properties: {
@@ -106,6 +140,18 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
               memoryInGB: memoryInGb
             }
           }
+          volumeMounts: [
+            {
+              name: 'appdata'
+              mountPath: '/appdata'
+              readOnly: false
+            }
+            {
+              name: 'media'
+              mountPath: '/media'
+              readOnly: true
+            }
+          ]
         }
       }
     ]
@@ -114,6 +160,24 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         id: subnet.id
         name: subnetName
+      }
+    ]
+    volumes: [
+      {
+        name: 'appdata'
+        azureFile: {
+          shareName: 'appdata'
+          storageAccountName: storageAccNameContainer
+          storageAccountKey: storageAccount.listKeys().keys[0].value
+        }
+      }
+      {
+        name: 'media'
+        azureFile: {
+          shareName: 'media'
+          storageAccountName: storageAccNameContainer
+          storageAccountKey: storageAccount.listKeys().keys[0].value
+        }
       }
     ]
     restartPolicy: 'Always'
