@@ -10,9 +10,9 @@ var GlobalVnetName = '${prefix}-vnet'
 var GlobalVnetAddressPrefix = '10.10.0.0/16'
 var ContainerSubnetAddressPrefix = '10.10.1.0/24'
 var ContainerSubnetName = 'aci-subnet'
-var networkProfileName = 'aci-networkProfile'
-var interfaceConfigName = 'eth0'
-var interfaceIpConfig = 'ipconfigprofile1'
+//var networkProfileName = 'aci-networkProfile'
+//var interfaceConfigName = 'eth0'
+//var interfaceIpConfig = 'ipconfigprofile1'
 var containerGroupName = '${prefix}-containergroup'
 var containerName = '${prefix}-container'
 var image = 'mcr.microsoft.com/azuredocs/aci-helloworld'
@@ -56,30 +56,6 @@ resource ContainerSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01' 
         name: 'DelegationService'
         properties: {
           serviceName: 'Microsoft.ContainerInstance/containerGroups'
-        }
-      }
-    ]
-  }
-}
-
-resource networkProfile 'Microsoft.Network/networkProfiles@2024-01-01' = {
-  name: networkProfileName
-  location: location
-  properties: {
-    containerNetworkInterfaceConfigurations: [
-      {
-        name: interfaceConfigName
-        properties: {
-          ipConfigurations: [
-            {
-              name: interfaceIpConfig
-              properties: {
-                subnet: {
-                  id: ContainerSubnet.id
-                }
-              }
-            }
-          ]
         }
       }
     ]
@@ -163,6 +139,16 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
               readOnly: true
             }
           ]
+          ipAddress: {
+            ports: [
+              {
+                protocol: 'TCP'
+                port: port
+              }
+            ]
+            type: 'Public'
+            dnsNameLabel: 'jfcontdev'
+          }
         }
       }
     ]
