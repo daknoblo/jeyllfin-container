@@ -46,6 +46,11 @@ resource ContainerSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01' 
   parent: GlobalVnet
   properties: {
     addressPrefix: ContainerSubnetAddressPrefix
+    serviceEndpoints: [
+      {
+        service: 'Microsoft.ContainerInstance'
+      }
+    ]
     delegations: [
       {
         name: 'DelegationService'
