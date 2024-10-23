@@ -48,7 +48,7 @@ resource ContainerSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-01-01' 
     addressPrefix: ContainerSubnetAddressPrefix
     serviceEndpoints: [
       {
-        service: 'Microsoft.ContainerInstance'
+        service: 'Microsoft.Storage'
       }
     ]
     delegations: [
