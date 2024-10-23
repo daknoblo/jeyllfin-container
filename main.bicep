@@ -139,16 +139,6 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
               readOnly: true
             }
           ]
-          ipAddress: {
-            ports: [
-              {
-                protocol: 'TCP'
-                port: port
-              }
-            ]
-            type: 'Public'
-            dnsNameLabel: 'jfcontdev'
-          }
         }
       }
     ]
@@ -159,6 +149,16 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
         name: ContainerSubnetName
       }
     ]
+    ipAddress: {
+      ports: [
+        {
+          protocol: 'TCP'
+          port: port
+        }
+      ]
+      type: 'Public'
+      dnsNameLabel: 'jfcontdev'
+    }
     volumes: [
       {
         name: 'appdata'
