@@ -13,8 +13,8 @@ var subnetName = 'aci-subnet'
 var networkProfileName = 'aci-networkProfile'
 var interfaceConfigName = 'eth0'
 var interfaceIpConfig = 'ipconfigprofile1'
-var containerGroupName = 'aci-containergroup'
-var containerName = 'aci-container'
+var containerGroupName = '${prefix}-containergroup'
+var containerName = '${prefix}-container'
 var image = 'mcr.microsoft.com/azuredocs/aci-helloworld'
 var port = 80
 var cpuCores = 2
@@ -92,30 +92,37 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
   kind: storageKind
   properties: {
-    accessTier: 'Cool'
+    accessTier: 'Cold'
+    allowBlobPublicAccess: false
+    minimumTlsVersion: 'TLS1_2'
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+      virtualNetworkRules: [
+        {
+          id: subnet.id
+          action: 'Allow'
+        }
+      ]
+    }
   }
 }
 
 resource fileShareAppData 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
   name: '${storageAccount.name}/default/appdata'
   properties: {
-    shareQuota: 5120 // 5GB
+    shareQuota: 5 // 5GB
   }
 }
 
 resource fileShareMedia 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
   name: '${storageAccount.name}/default/media'
   properties: {
-    shareQuota: 10240 // 10GB
+    shareQuota: 100 // 100GB
   }
 }
 
 //// identity and role assignements ////
-
-resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: userAssignedIdentityName
-  location: location
-}
 
 //// container instance ////
 
