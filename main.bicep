@@ -14,8 +14,8 @@ var ContainerSubnetName = 'aci-subnet'
 //var interfaceIpConfig = 'ipconfigprofile1'
 var containerGroupName = '${prefix}-containergroup'
 var containerName = '${prefix}-container'
-var image = 'mcr.microsoft.com/azuredocs/aci-helloworld'
-var port = 80
+var image = 'jellyfin/jellyfin'
+var port = 8096
 var cpuCores = 2
 var memoryInGb = 2
 
@@ -82,15 +82,23 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-resource fileShareAppData 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
-  name: '${storageAccount.name}/default/appdata'
+resource fileShareJfConfig 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+  name: '${storageAccount.name}/default/jfconfig'
+  properties: {
+    shareQuota: 5 // 5GB
+
+  }
+}
+
+resource fileShareJfCache 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+  name: '${storageAccount.name}/default/jfcache'
   properties: {
     shareQuota: 5 // 5GB
   }
 }
 
-resource fileShareMedia 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
-  name: '${storageAccount.name}/default/media'
+resource fileShareJfMedia 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+  name: '${storageAccount.name}/default/jfmedia'
   properties: {
     shareQuota: 100 // 100GB
   }
@@ -123,12 +131,17 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
           }
           volumeMounts: [
             {
-              name: 'appdata'
-              mountPath: '/appdata'
+              name: 'jfconfig'
+              mountPath: '/config'
               readOnly: false
             }
             {
-              name: 'media'
+              name: 'jfcache'
+              mountPath: '/cache'
+              readOnly: false
+            }
+            {
+              name: 'jfmedia'
               mountPath: '/media'
               readOnly: true
             }
@@ -154,17 +167,25 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
     }
     volumes: [
       {
-        name: 'appdata'
+        name: 'jfconfig'
         azureFile: {
-          shareName: 'appdata'
+          shareName: 'jfconfig'
           storageAccountName: storageAccNameContainer
           storageAccountKey: storageAccount.listKeys().keys[0].value
         }
       }
       {
-        name: 'media'
+        name: 'jfcache'
         azureFile: {
-          shareName: 'media'
+          shareName: 'jfcache'
+          storageAccountName: storageAccNameContainer
+          storageAccountKey: storageAccount.listKeys().keys[0].value
+        }
+      }
+      {
+        name: 'jfmedia'
+        azureFile: {
+          shareName: 'jfmedia'
           storageAccountName: storageAccNameContainer
           storageAccountKey: storageAccount.listKeys().keys[0].value
         }
