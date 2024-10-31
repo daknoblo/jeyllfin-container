@@ -163,7 +163,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
           port: port
         }
       ]
-      type: 'Private'
+      type: 'Public'
     }
     volumes: [
       {
