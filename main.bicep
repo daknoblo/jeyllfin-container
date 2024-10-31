@@ -150,7 +150,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
           port: port
         }
       ]
-      type: 'Public'
+      type: 'Private'
       dnsNameLabel: 'jfcontdev'
     }
     volumes: [
@@ -174,5 +174,3 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
     restartPolicy: 'Always'
   }
 }
-
-output containerIPv4Address string = containerGroup.properties.ipAddress.ip
