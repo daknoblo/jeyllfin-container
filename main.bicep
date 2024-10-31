@@ -151,7 +151,6 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-
         }
       ]
       type: 'Private'
-      dnsNameLabel: 'jfcontdev'
     }
     volumes: [
       {
