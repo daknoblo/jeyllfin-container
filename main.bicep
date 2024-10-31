@@ -2,7 +2,6 @@ targetScope = 'resourceGroup'
 
 var prefix = 'jf'
 var location = 'germanywestcentral'
-var rgName = 'jellyfin-dev'
 var storageSku = 'Standard_LRS'
 var storageKind = 'StorageV2'
 var storageAccNameContainer = '${prefix}sacontainer7908'
@@ -21,11 +20,6 @@ var cpuCores = 2
 var memoryInGb = 2
 
 //// target resource group ////
-
-resource resourceGroupName 'Microsoft.Resources/resourceGroups@2024-07-01' existing = {
-  name: rgName
-  scope: subscription(rgName)
-}
 
 //// network resources ////
 
