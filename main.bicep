@@ -104,8 +104,6 @@ resource fileShareJfMedia 'Microsoft.Storage/storageAccounts/fileServices/shares
   }
 }
 
-//// identity and role assignements ////
-
 //// container instance ////
 
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2024-05-01-preview' = {
